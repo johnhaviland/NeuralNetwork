@@ -8,7 +8,7 @@ from keras.layers import Dense, Embedding, Flatten
 from nltk.tokenize import word_tokenize
 import string
 import nltk
-import pandas as pd  # Import pandas with 'as pd'
+import pandas as pd
 
 # Load NBA Players Dataset
 nba_players_dataset = pd.read_json(r"C:\Users\jhavi\Downloads\nba-players_21-22.json")
