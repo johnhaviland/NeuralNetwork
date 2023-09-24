@@ -1,27 +1,23 @@
-# Required Libraries
+# Import libraries
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
 from keras.models import Sequential
-from keras.layers import Dense, Embedding, Flatten
-import string
-# import nltk
+from keras.layers import Dense
 import pandas as pd
 
-# Load NBA Players Dataset
-nba_players_dataset = pd.read_json(r"nba-players_21-22.json")
+# Load NBA player dataset
+# ADD PATH MANUALLY AFTER DOWNLOADING ACCOMPANYING FILE
+nba_players_dataset = pd.read_json(r"C:\Users\jhavi\Downloads\nba-players_21-22.json")
 
-# features
-features = ['ast', 'reb', 'gp', 'usg_pct', 'dreb_pct']
-X = nba_players_dataset[features]
+input_features = [
+    "player_height", "player_weight", "gp", "pts", "reb", "ast", "oreb_pct", "dreb_pct", "usg_pct", "ts_pct", "ast_pct"
+]
 
-
-# Define the selection criteria
+# Define selection criteria
 criteria = (
-    (nba_players_dataset['gp'] >= 75) &
-    (nba_players_dataset['player_height'] >= 196) &
+    (nba_players_dataset['gp'] >= 70) &
+    (nba_players_dataset['player_height'] >= 194) &
+    (nba_players_dataset['pts'] >= 15) &
     (nba_players_dataset['reb'] >= 4) &
     (nba_players_dataset['ast_pct'] >= 0.1) &
     (nba_players_dataset['ts_pct'] >= 0.56)
@@ -30,52 +26,49 @@ criteria = (
 # Create the 'selected_for_team' column based on the criteria
 nba_players_dataset['selected_for_team'] = criteria.astype(int)
 
-
 # Extract the input features from the dataset
+x = nba_players_dataset[input_features].values
 
 # Target variable
-y = nba_players_dataset['selected_for_team'].values  # 'selected_for_team' is the target variable
+y = nba_players_dataset['selected_for_team'].values
 
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
-# Split data for training
-X_train, X_test, y_train, Y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=11)
+# Split data
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
 # Define the MLP model
 model = Sequential()
-model.add(Dense(128, activation='relu', input_dim=X_train.shape[1]))  # Input layer
-model.add(Dense(64, activation='relu'))  # Hidden layer(s)
-model.add(Dense(1, activation='sigmoid'))  # Output layer
+model.add(Dense(128, activation='relu', input_dim=x_train.shape[1]))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
 
-# Compile the Model
+# Compile, train, and evaluate model
 model.compile(optimizer='adam',
               loss='binary_crossentropy',
               metrics=['accuracy'])
 
-# Train the Model
-history = model.fit(X_train, y_train, epochs=100, batch_size=64, validation_split=0.2)
+history = model.fit(x_train, y_train, epochs=500, batch_size=64, validation_split=0.2)
 
-# Evaluate the Model
-loss, accuracy = model.evaluate(X_test, Y_test)
+loss, accuracy = model.evaluate(x_test, y_test)
 print(f'Test loss: {loss:.4f}')
 print(f'Test accuracy: {accuracy:.4f}')
 
+# Filter the dataset based on criteria
+filtered_players = nba_players_dataset[criteria]
 
-predictions = model.predict(X_test)
-threshold = 0.5
-predicted_labels = (predictions > threshold).astype(int)
+# if there are players in the filtered dataset
+if not filtered_players.empty:
+    # Extract input features and target from the filtered dataset
+    filtered_x_test = filtered_players[input_features].values
+    filtered_y_test = filtered_players['selected_for_team'].values
 
-# Select the top 5 players with the highest predicted probability
-top_players_indices = predicted_labels[:, 0].argsort()[-5:][::-1]
-top_players = nba_players_dataset.iloc[top_players_indices]
-print("Optimal Team:")
-print(top_players)
+    # Predict labels for the filtered dataset
+    filtered_predictions = model.predict(filtered_x_test)
 
-# Check the number of players meeting each criterion
-print("Number of players meeting each criterion:")
-print("Criterion 1 (gp >= 75):", sum(nba_players_dataset['gp'] >= 75))
-print("Criterion 2 (player_height >= 200):", sum(nba_players_dataset['player_height'] >= 200))
-print("Criterion 4 (reb >= 6):", sum(nba_players_dataset['reb'] >= 6))
-print("Criterion 5 (ast_pct >= 0.2):", sum(nba_players_dataset['ast_pct'] >= 0.2))
-print("Criterion 7 (ts_pct >= 0.58):", sum(nba_players_dataset['ts_pct'] >= 0.58))
+    # Sort the players based on predicted probability
+    top_players_indices = np.argsort(filtered_predictions[:, 0])[::-1]
+    top_players = filtered_players.iloc[top_players_indices[:5]]
+    print("Optimal Team:")
+    print(top_players)
+else:
+    print("No players meet the criteria.")
+
