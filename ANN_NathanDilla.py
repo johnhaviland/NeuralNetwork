@@ -28,11 +28,11 @@ for player in pool_of_players:
         position = [1, 0, 0, 0, 0]  # point guard
     elif player['player_height'] > 195 and player['gp'] > 60 and player['pts'] > 18 and player['net_rating'] > 0 and player['usg_pct'] < 0.35 and player['ts_pct'] > 0.57 and player['ast_pct'] > 0.1:
         position = [0, 1, 0, 0, 0]     # shooting guard
-    elif player['player_height'] > player['gp'] > 60 and player['pts'] > 18 and player['reb'] > 4 and player['net_rating'] > 0 and player['usg_pct'] < 0.35 and player['ts_pct'] > 0.57 and player['dreb_pct'] > 0.12 and player['ast_pct'] > 0.1:
+    elif player['player_height'] > 203 and player['gp'] > 60 and player['pts'] > 18 and player['reb'] > 4 and player['net_rating'] > 0 and player['usg_pct'] < 0.35 and player['ts_pct'] > 0.57 and player['dreb_pct'] > 0.12 and player['ast_pct'] > 0.1:
         position = [0, 0, 1, 0, 0]     # small forward
-    elif player['player_height'] > player['gp'] > 60 and player['pts'] > 18 and player['reb'] > 6 and player['net_rating'] > 0 and player['usg_pct'] < 0.35 and player['ts_pct'] > 0.57 and player['dreb_pct'] > 0.16 and player['ast_pct'] > 0.1:
+    elif player['player_height'] > 205 and player['gp'] > 60 and player['pts'] > 18 and player['reb'] > 6 and player['net_rating'] > 0 and player['usg_pct'] < 0.35 and player['ts_pct'] > 0.57 and player['dreb_pct'] > 0.16 and player['ast_pct'] > 0.1:
         position = [0, 0, 0, 1, 0]     # power forward
-    elif player['player_height'] > player['gp'] > 60 and player['reb'] > 6 and player['net_rating'] > 0 and player['usg_pct'] < 0.35 and player['ts_pct'] > 0.57 and player['dreb_pct'] > 0.22 and player['ast_pct'] > 0.05:
+    elif player['player_height'] > 208 and player['gp'] > 60 and player['reb'] > 6 and player['net_rating'] > 0 and player['usg_pct'] < 0.35 and player['ts_pct'] > 0.57 and player['dreb_pct'] > 0.22 and player['ast_pct'] > 0.05:
         position = [0, 0, 0, 0, 1]     # center
     y_train.append(position)
 
