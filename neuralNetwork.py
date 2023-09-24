@@ -15,11 +15,11 @@ input_features = [
 
 # Define selection criteria
 criteria = (
-    (nba_players_dataset['gp'] >= 70) &
-    (nba_players_dataset['player_height'] >= 194) &
+    (nba_players_dataset['gp'] >= 65) &
+    (nba_players_dataset['player_height'] >= 185) &
     (nba_players_dataset['pts'] >= 15) &
     (nba_players_dataset['reb'] >= 4) &
-    (nba_players_dataset['ast_pct'] >= 0.1) &
+    (nba_players_dataset['ast_pct'] >= 0.15) &
     (nba_players_dataset['ts_pct'] >= 0.56)
 )
 
@@ -46,7 +46,7 @@ model.compile(optimizer='adam',
               loss='binary_crossentropy',
               metrics=['accuracy'])
 
-history = model.fit(x_train, y_train, epochs=500, batch_size=64, validation_split=0.2)
+history = model.fit(x_train, y_train, epochs=100, batch_size=64, validation_split=0.2)
 
 loss, accuracy = model.evaluate(x_test, y_test)
 print(f'Test loss: {loss:.4f}')
@@ -71,4 +71,3 @@ if not filtered_players.empty:
     print(top_players)
 else:
     print("No players meet the criteria.")
-
