@@ -7,7 +7,7 @@ import pandas as pd
 
 # Load NBA player dataset
 # ADD PATH MANUALLY AFTER DOWNLOADING ACCOMPANYING FILE
-nba_players_dataset = pd.read_json(r"C:\Users\jhavi\Downloads\nba-players_21-22.json")
+nba_players_dataset = pd.read_json(r"nba-players_21-22.json")
 
 input_features = [
     "player_height", "player_weight", "gp", "pts", "reb", "ast", "oreb_pct", "dreb_pct", "usg_pct", "ts_pct", "ast_pct"
