@@ -18,27 +18,32 @@ y_train = []
 
 for player in pool_of_players:
     # Extract features
-    features = [player['ast'], player['reb'], player['gp']] 
+    features = [player['player_height'], player['gp'], player['pts'], player['reb'], player['ast'], player['net_rating'], player['oreb_pct'], player['dreb_pct'], player['usg_pct'], player['ts_pct'], player['ast_pct']]
     X_train.append(features)
 
-    label = [1, 0, 0, 0, 0]
-    
-    # Extract labels based on some criteria
-    if player['ast'] > 0.4:  # Just an example criterion
-        label = [1, 0, 0, 0, 0]
-    elif player['reb'] + player['gp'] > 100:  # Another example criterion
-        label = [0, 1, 0, 0, 0]
-    # ... Add more criteria for other roles
-    y_train.append(label)
+    position = [0, 0, 0, 0, 0]      # initializing position array
+
+    # Extract position labels based on some criteria
+    if player['player_height'] > 180 and player['gp'] > 60 and player['ast'] > 6 and player['net_rating'] > 0 and player['usg_pct'] < 0.35 and player['ts_pct'] > 0.57 and player['ast_pct'] > 0.15:
+        position = [1, 0, 0, 0, 0]  # point guard
+    elif player['player_height'] > 195 and player['gp'] > 60 and player['pts'] > 18 and player['net_rating'] > 0 and player['usg_pct'] < 0.35 and player['ts_pct'] > 0.57 and player['ast_pct'] > 0.1:
+        position = [0, 1, 0, 0, 0]     # shooting guard
+    elif player['player_height'] > player['gp'] > 60 and player['pts'] > 18 and player['reb'] > 4 and player['net_rating'] > 0 and player['usg_pct'] < 0.35 and player['ts_pct'] > 0.57 and player['dreb_pct'] > 0.12 and player['ast_pct'] > 0.1:
+        position = [0, 0, 1, 0, 0]     # small forward
+    elif player['player_height'] > player['gp'] > 60 and player['pts'] > 18 and player['reb'] > 6 and player['net_rating'] > 0 and player['usg_pct'] < 0.35 and player['ts_pct'] > 0.57 and player['dreb_pct'] > 0.16 and player['ast_pct'] > 0.1:
+        position = [0, 0, 0, 1, 0]     # power forward
+    elif player['player_height'] > player['gp'] > 60 and player['reb'] > 6 and player['net_rating'] > 0 and player['usg_pct'] < 0.35 and player['ts_pct'] > 0.57 and player['dreb_pct'] > 0.22 and player['ast_pct'] > 0.05:
+        position = [0, 0, 0, 0, 1]     # center
+    y_train.append(position)
 
 X_train = np.array(X_train)
 y_train = np.array(y_train)
 
 # Define the model
 model = tf.keras.Sequential([
-    tf.keras.layers.InputLayer(input_shape=(3,)),  # Input layer
+    tf.keras.layers.InputLayer(input_shape=(11,)),  # Input layer
     tf.keras.layers.Dense(128, activation='relu'),  # Hidden layer 1
-    tf.keras.layers.Dense(64, activation='relu'),   # Hidden layer 2
+    tf.keras.layers.Dense(64, activation='relu'),  # Hidden layer 2
     tf.keras.layers.Dense(5, activation='softmax')  # Output layer
 ])
 
@@ -46,7 +51,7 @@ model = tf.keras.Sequential([
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Train the model
-model.fit(X_train, y_train, epochs=10, batch_size=32)
+model.fit(X_train, y_train, epochs=100, batch_size=32)
 
 # Predict using the model
 predictions = model.predict(X_train)
@@ -68,4 +73,4 @@ optimal_team = [pool_of_players[index] for index in optimal_team_indices]
 
 # Print the optimal team
 for player in optimal_team:
-    print(player['player_name'])  # Assuming each player has a 'name' attribute in the JSON data
+    print(player['player_name'], )  # Assuming each player has a 'name' attribute in the JSON data
