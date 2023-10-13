@@ -26,6 +26,11 @@ TO-DO:
 TO-DO:
 
 - Remove unnecessary 'noise' from the text
+- Tokenize the text
+- Remove stop words
+- Lemmatize the text
+- Stem the text
+- uncapitilize the text
 '''
 
 # Step 3: Text Vectorization
@@ -33,6 +38,7 @@ TO-DO:
 TO-DO:
 
 - Implement TF-IDF/Word Embeddings
+- 
 '''
 
 # Step 4: Summarization Model Selection
